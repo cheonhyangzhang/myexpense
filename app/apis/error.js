@@ -1,10 +1,16 @@
 module.exports = {
 	common:function(code, title, detail, res){
-		return res.status(400).send({ 
+		return res.status(code).send({ 
 		        reason: title, 
 		        code: code,
 		        message: detail
 		});
+	},
+	forbidden:function(title, detail, res){
+		return this.common(403, title,detail, res);
+	},
+	notFound:function(title, detail, res){
+		return this.common(404, title,detail, res);
 	},
 	internalError:function(title, detail, res){
 		return this.common(500, title,detail, res);
