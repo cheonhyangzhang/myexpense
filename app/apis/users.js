@@ -19,6 +19,7 @@ module.exports = function (apiRoutes) {
 					user.username = req.body.username;
 					user.from = req.body.from;
 					user.fromname = req.body.fromname;
+					user.displayName = req.body.displayName;
 					user.save().then(function(user){
 						if (!user) error.internalError('','',res);
 
