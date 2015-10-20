@@ -1,9 +1,10 @@
 // API ROUTES -------------------
 var express     = require('express');
-var config = require('./config');
+var config = require('../config');
 var jwt    = require('jsonwebtoken');
 // get an instance of the router for api routes
 var apiRoutes = express.Router(); 
+require('./apis/users.js')(apiRoutes);
 
 // route middleware to verify a token
 apiRoutes.use(function(req, res, next) {
@@ -49,12 +50,7 @@ apiRoutes.get('/', function(req, res) {
   res.json({ message: 'Welcome to the coolest API on earth!' });
 });
 
-// route to return all users (GET http://localhost:8080/api/users)
-apiRoutes.get('/users', function(req, res) {
-  User.find({}, function(err, users) {
-    res.json(users);
-  });
-});  
+
 
 // route to authenticate a user (POST http://localhost:8080/api/authenticate)
 apiRoutes.post('/authenticate', function(req, res) {
