@@ -4,7 +4,7 @@ var error = require('./error')
 module.exports = function (apiRoutes) {
 	// route to return all users (GET http://localhost:8080/api/users)
 	var User   = require('../models/user');
-	
+
 	//available to everybody
 	apiRoutes.post('/users', function(req, res) {
 		if (req.body.username && req.body.from && req.body.fromname){
@@ -19,11 +19,9 @@ module.exports = function (apiRoutes) {
 					user.username = req.body.username;
 					user.from = req.body.from;
 					user.fromname = req.body.fromname;
-					user.save().then(function(err){
-						console.log(err);
-						if (err){
-							error.internalError('','',res);
-						}
+					user.save().then(function(user){
+						if (!user) error.internalError('','',res);
+
 						res.json(user);
 					});
 				}
