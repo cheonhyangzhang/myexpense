@@ -9,7 +9,7 @@ var mongoose    = require('mongoose');
 
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
-var User   = require('./app/models/user.js'); // get our mongoose model
+var User   = require('./rest/models/user.js'); // get our mongoose model
     
 // =======================
 // configuration =========
@@ -26,43 +26,34 @@ app.use(bodyParser.json());
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 
-// =======================
-// routes ================
-// =======================
-// basic route
-app.get('/', function(req, res) {
-    res.send('Hello! The API is at http://localhost:' + port + '/api');
-});
-
-
-app.get('/setup', function(req, res) {
-
-  // create a sample user
-  var nick = new User({ 
-    name: 'Nick Cerminara', 
-    password: 'password',
-    admin: true 
-  });
-
-  // save the sample user
-  nick.save(function(err) {
-    if (err) throw err;
-
-    console.log('User saved successfully');
-    res.json({ success: true });
-  });
-});
-
-
-
-
-
-apiRoutes = require('./app/routes.js');
+apiRoutes = require('./rest/routes.js');
 
 
 
 // apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);
+
+// =======================
+// routes ================
+// =======================
+// basic route
+
+app.use("/bower_components", express.static(__dirname + '/app/bower_components'));
+app.use("/styles", express.static(__dirname + '/app/styles'));
+app.use("/scripts", express.static(__dirname + '/app/scripts'));
+app.use("/images", express.static(__dirname + '/app/images'));
+app.use("/elements", express.static(__dirname + '/app/elements'));
+
+app.get('*', function(req, res) {
+    res.sendfile('./app/index.html'); // load our public/index.html file
+});
+
+
+
+
+
+
+
 
 
 
