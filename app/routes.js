@@ -9,7 +9,8 @@ var User   = require('./models/user')
 
 
 
-require('./apis/users.js')(apiRoutes);
+require('./apis/users')(apiRoutes);
+require('./apis/expenses')(apiRoutes);
 
 
 

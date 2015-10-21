@@ -68,6 +68,7 @@ module.exports = function (apiRoutes) {
 
 	apiRoutes.get('/users', function(req, res) {
 		var error = permission.check(req, res);
+		
 		// var error = null;
 		if (!error){
 	  		User.find({}, function(err, users) {

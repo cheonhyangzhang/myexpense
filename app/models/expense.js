@@ -8,6 +8,7 @@ module.exports = mongoose.model('Expense', new Schema({
     org: String, 
     description: String,
     category: String,
+    subcategory: String,
     amount: Number,
     owner: String
 }));

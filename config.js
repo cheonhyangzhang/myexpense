@@ -4,6 +4,8 @@ var local_db = 'mongodb://localhost:27017/test';
 
 // var connect_db = test_db;
 var connect_db = local_db;
+
+//secret is very important
 module.exports = {
     'secret': 'ilovescotchyscotch',
     'database': connect_db 
