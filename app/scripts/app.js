@@ -71,4 +71,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     document.getElementById('mainContainer').scrollTop = 0;
   };
 
+
+  app.ajax = function(method, theUrl,data, callback)
+  {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+      if (xmlHttp.readyState == 4)
+            callback(JSON.parse(xmlHttp.response));
+    }
+    xmlHttp.open(method, theUrl, true); // true for asynchronous 
+    xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    console.log("set token");
+    console.log(app.api.token);
+    xmlHttp.setRequestHeader("x-access-token", app.api.token);
+    xmlHttp.send(data);
+  }
+
+  app.api_url = 'http://localhost:8080/api/';
+  app.api = {
+    token:"",
+    user:{},
+    authenticate:function(from, userid, token, callback){
+      console.log("app.api.authenticate");
+      console.log(from, userid, token);
+      var api = this;
+      app.ajax("POST", app.api_url + "authenticate", "from=Google&userid="+userid+"&token="+token, function(resp){
+        console.log("js ajax call resp");
+        console.log(typeof(resp));
+        console.log(resp);
+        console.log(this);
+        api.token = resp.token;
+        api.user = resp.user;
+        callback(resp);
+
+      });
+    },
+    userCreate:function(username, from, fromName, displayName, token, callback){
+      console.log("userCreate");
+      app.ajax("POST", app.api_url + "users", "username="+username + "&from="+from+"&fromName="+fromName+"&displayName="+displayName+"&token="+token, function(resp){
+        console.log("js ajax call resp");
+        console.log(typeof(resp));
+        console.log(resp);
+        callback(resp);
+      });
+
+    }
+  }
+
 })(document);

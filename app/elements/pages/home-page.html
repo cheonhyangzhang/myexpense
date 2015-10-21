@@ -1,0 +1,40 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
+
+<dom-module id="home-page">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+      .primary-button {
+        background: #4285f4;
+        color: white;
+      }
+    </style>
+    This is the home page.
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+      
+      Polymer({
+        is: 'home-page',
+        properties: {
+          hasAccount: {
+            type: Boolean,
+            value: false,
+            notify: true
+          }
+        }
+      
+      
+      });
+    })();
+  </script>
+
+</dom-module>

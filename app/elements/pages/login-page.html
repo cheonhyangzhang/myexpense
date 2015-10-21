@@ -1,4 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
 
 <dom-module id="login-page">
   <template>
@@ -7,8 +10,39 @@
       :host {
         display: block;
       }
+      .primary-button {
+        background: #4285f4;
+        color: white;
+      }
     </style>
-    <h2 class="page-title"><span>Login</span></h2>
+    <template is="dom-if" if="{{!hasAccount}}">
+    <div>
+    <h2 class="page-title"><span>Register </span></h2>
+    <p> 1 Provide a username</p>
+    <p> 2 Register</p>
+    <span>{{auth}}</span>
+    <paper-input value="{{username}}" label="username"></paper-input>
+    <paper-input value="{{displayName}}" label="display name"></paper-input>
+        <paper-button class="primary-button" on-click="register">Register</paper-button>
+    </div>
+    <div>
+      <google-signin id="login-button" width="wide" height="tall"
+        client-id="659023611005-orca8p6dt24i2gg5sfq0p1om7gmnvnjq.apps.googleusercontent.com"
+        scopes="email"
+        on-google-signin-success="onSigninSuccess"
+        on-google-signin-failure="onSigninFailure"></google-signin>
+    </div>
+    </template>
+    <template is="dom-if" if="{{hasAccount}}">
+    <div>
+    <h2 class="page-title"><span>Sigining your Google account</span></h2>
+     <google-signin id="login-button" width="wide" height="tall"
+        client-id="659023611005-orca8p6dt24i2gg5sfq0p1om7gmnvnjq.apps.googleusercontent.com"
+        scopes="email"
+        on-google-signin-success="onSigninSuccess"
+        on-google-signin-failure="onSigninFailure"></google-signin>
+    </div>
+    </template>
   </template>
 
   <script>
@@ -18,12 +52,68 @@
       Polymer({
         is: 'login-page',
         properties: {
-          greeting: {
-            type: String,
-            value: 'Welcome!',
+          hasAccount: {
+            type: Boolean,
+            value: true,
             notify: true
+          },
+          showRegister:{
+            type:Boolean,
+            value:false
+          },
+          username:String
+        },
+        register: function(e){
+          console.log("register"); 
+          if (this.username && this.username.trim() != ""){
+            console.log("good to go");
+            app.api.userCreate(this.username, "Google", app.user.getBasicProfile().getEmail(), this.displayName, app.access_token, function(resp){
+              console.log("userCreate resp");
+              console.log(resp);
+              if (!resp.code){
+                app.route = "home";
+              }
+            });
           }
-        }
+        },
+        onSigninFailure:function(e, detail, sender) {
+          console.log("onSigninFailure")
+        },
+        onSigninSuccess:function(e, detail, sender) {
+          app.user = gapi.auth2.getAuthInstance().currentUser.get();
+          app.access_token = app.user.getAuthResponse().access_token;
+          var googleEmail = app.user.getBasicProfile().getEmail();
+          var element = this;
+          app.api.authenticate("Google", googleEmail, app.access_token, function(resp){
+            console.log("onSigninSuccess: resp");
+            if (resp.code){
+              console.log("no user defined");
+              console.log(resp.code);
+              if (resp.code == 404){
+                  //user not found
+                  element.hasAccount = false;
+              }
+              else if (resp.code == 403){
+              }
+              else{
+              }
+              //show register page
+            }
+            else{
+              element.isAuthed = true;
+              app.auth = resp;
+              app.route = "home";
+              //redirect to home page
+            }
+
+          });
+
+
+          console.log(app.user);
+          console.log(app.access_token);
+      }//onSuccessLogin
+      
+      
       });
     })();
   </script>

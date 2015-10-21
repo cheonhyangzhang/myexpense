@@ -2,6 +2,7 @@ var http = require('http');
 var https = require("https");
 var jwt    = require('jsonwebtoken');
 var config = require('../../config');
+var error = require('./error');
 
 module.exports = {
 	checkThirdParty:function(from, fromName, token, callback){
@@ -41,8 +42,28 @@ module.exports = {
 		}
 
 	},
+	sameUserCheck: function(req, res){
+		var token = req.headers['x-access-token'];
+		console.log("sameUserCheck");
+		if (token){
+			 jwt.verify(token, config.secret, function(err, decoded) {      
+		     	if (!err) {
+		     		console.log("Returning decoded");
+		     		console.log(decoded);
+		     		return null;
+		     	}
+		     	else {
+					return error.forbaddien("Invalid token", "Invalid token", res);
+		    	}
+		    });
+		}
+		else{
+			return error.forbaddien("No token provided", "No token provided", res);
+		}
+	},
 	userFromToken: function(req, callback){
-		var token = req.body.token || req.query.token || req.headers['x-access-token'];
+		// var token = req.body.token || req.query.token || req.headers['x-access-token'];
+		var token = req.headers['x-access-token'];
 		console.log("userFromToken");
 		if (token){
 			 jwt.verify(token, config.secret, function(err, decoded) {      
