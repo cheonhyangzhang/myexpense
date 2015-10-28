@@ -14,7 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // and give it some initial binding values
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
-
+  app.ready = false;
   app.displayInstalledToast = function() {
     // Check to make sure caching is actually enabled—it won't be in the dev environment.
     if (!document.querySelector('platinum-sw-cache').disabled) {
@@ -72,8 +72,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   };
 
 
+  app.services = {
+    getAllExpenses: function(){
+      console.log(this);
+      app.api.expenseList(function(resp){
+        console.log("getAllExpenses");
+        console.log(resp);
+      }); 
+    }
+  }
+
   app.ajax = function(method, theUrl,data, callback)
   {
+    console.log("app.ajax");
+    console.log(app.api.token);
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
       if (xmlHttp.readyState == 4)
@@ -81,8 +93,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
     xmlHttp.open(method, theUrl, true); // true for asynchronous 
     xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    console.log("set token");
-    console.log(app.api.token);
     xmlHttp.setRequestHeader("x-access-token", app.api.token);
     xmlHttp.send(data);
   }
@@ -90,21 +100,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.api_url = 'http://localhost:8080/api/';
   app.api = {
     token:"",
+    isReady:false,
     user:{},
+    _serialize:function(obj) {
+      var str = [];
+      for(var p in obj)
+        if (obj.hasOwnProperty(p)) {
+          str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        }
+      return str.join("&");
+    },
     authenticate:function(from, userid, token, callback){
       console.log("app.api.authenticate");
       console.log(from, userid, token);
       var api = this;
       app.ajax("POST", app.api_url + "authenticate", "from=Google&userid="+userid+"&token="+token, function(resp){
-        console.log("js ajax call resp");
-        console.log(typeof(resp));
-        console.log(resp);
-        console.log(this);
         api.token = resp.token;
         api.user = resp.user;
+        api.isReady = true;
         callback(resp);
 
       });
+    },
+    expenseList:function(callback){
+      console.log("expenseList");
+      app.ajax("GET", app.api_url + "expenses" + "?username="+this.user.username, "", function(resp){
+        callback(resp);
+      });
+    },
+    expenseCreate:function(newExpense, callback){
+      var newExpenseUrlData = this._serialize(newExpense);
+      app.ajax("POST", app.api_url + "expenses", newExpenseUrlData, function(resp){
+        console.log("js ajax call POST /expenses");
+        callback(resp);
+      });
+
     },
     userCreate:function(username, from, fromName, displayName, token, callback){
       console.log("userCreate");

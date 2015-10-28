@@ -6,22 +6,31 @@ module.exports = function (apiRoutes) {
 	var Expense   = require('../models/expense');
 	//available to everybody
 	apiRoutes.post('/expenses', function(req, res){
+		console.log("POST /expenses body:");
+		console.log(req.body);
 		permission.userFromToken(req, function(resp){
+			console.log("permission.userFromToken resp:");
+			console.log(resp);
 			var tokenUser = resp;
 			if (tokenUser){
-				if (req.body.date && req.body.org && req.body.amount){
+				console.log("check required fields");
+				if (req.body.date && req.body.merchant && req.body.amount){
 					var expense = new Expense();
 					expense.date = req.body.date;
-					expense.org = req.body.org;
+					expense.merchant = req.body.merchant;
 					expense.description = req.body.description;
 					expense.category = req.body.category;
 					expense.subcategory = req.body.subcategory;
 					expense.amount = req.body.amount;
 					expense.owner = tokenUser.username;
-					expense.save().then(function(resp){
+					console.log("before save to datastore");
+					console.log(expense);
+					expense.save(function(err, resp){
 						console.log("save result");
+						console.log(err);
 						console.log(resp);
-					if (!resp) error.internalError('','',res);
+						if (err) error.internalError('Failed to save to mongodb','Failed to save to mongodb',res);
+							
 						res.json(resp);
 					});
 				}
@@ -56,7 +65,8 @@ module.exports = function (apiRoutes) {
 					}
 				}
 				else{
-					error.badRequest('Missing required field','Required field is missing!',res);
+					console.log(req.query);
+					error.badRequest('Missing required field','username field is missing!',res);
 				}
 			}
 			else{

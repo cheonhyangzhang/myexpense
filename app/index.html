@@ -63,11 +63,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
 
-  
+      <google-signin id="login-button" width="wide" height="tall"
+        client-id="659023611005-orca8p6dt24i2gg5sfq0p1om7gmnvnjq.apps.googleusercontent.com"
+        scopes="email"></google-signin>
 
+      <paper-drawer-panel>
+         <paper-scroll-header-panel drawer fixed>
+
+          <!-- Drawer Toolbar -->
+          <paper-toolbar id="drawerToolbar">
+            <span class="paper-font-title">Menu</span>
+          </paper-toolbar>
+
+          <!-- Drawer Content -->
+          <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
+            <a data-route="home" href="/home">
+              <iron-icon icon="home"></iron-icon>
+              <span>Home</span>
+            </a>
+
+            <a data-route="expenses" href="/expenses">
+              <iron-icon icon="info"></iron-icon>
+              <span>Expenses</span>
+            </a>
+          </paper-menu>
+        </paper-scroll-header-panel>
       <!-- Main Area -->
       <paper-scroll-header-panel main condenses keep-condensed-header>
-
+         
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar" class="tall">
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
@@ -88,7 +111,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </div>
 
         </paper-toolbar>
-
         <!-- Main Content -->
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
@@ -99,11 +121,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </paper-material>
             </section>
 
+            <template is="dom-if" if="{{ready}}"> 
             <section data-route="home">
-              <paper-material elevation="1">
                 <home-page></home-page>
-              </paper-material>
             </section>
+            <section data-route="expenses">
+                <expenses-page ></expenses-page>
+            </section>
+            </template>
 
             <section data-route="user-info">
               <paper-material elevation="1">
@@ -125,6 +150,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </paper-scroll-header-panel>
  
+    </paper-drawer-panel>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
     <!--
@@ -142,9 +168,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </platinum-sw-cache>
     </platinum-sw-register>
     -->
+    <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
 
+    
   </template>
-
+  <script>
+    document.addEventListener("google-signin-success", function(e) {
+      console.log("index.html google-signin-success");
+      app.user = gapi.auth2.getAuthInstance().currentUser.get();
+      app.access_token = app.user.getAuthResponse().access_token;
+      var googleEmail = app.user.getBasicProfile().getEmail();
+      app.api.authenticate("Google", googleEmail, app.access_token, function(resp){
+        if (resp.code){
+          if (resp.code == 404){
+              //user not found
+              element.hasAccount = false;
+          }
+          else if (resp.code == 403){
+          }
+          else{
+          }
+          //show register page
+        }
+        else{
+          app.auth = resp;
+          app.ready = true;
+          //redirect to home page
+        }
+      });
+    });
+  </script>
   <!-- build:js scripts/app.js -->
   <script src="scripts/app.js"></script>
   <!-- endbuild-->

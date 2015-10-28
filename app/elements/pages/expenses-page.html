@@ -1,0 +1,74 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
+
+<dom-module id="expenses-page">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+      .primary-button {
+        background: #4285f4;
+        color: white;
+      }
+      .box{
+        padding:20px;
+      }
+    </style>
+    <h1>All Expenses</h1>
+    <template is="dom-repeat" items="{{expenses}}">
+      <paper-material class="box">
+      <span>{{item.merchant}}</span>
+      </paper-material>
+    </template>
+    <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
+  </template>
+
+  <script>
+
+    (function() {
+      'use strict';
+      
+      Polymer({
+        is: 'expenses-page',
+        properties: {
+          expenses:{
+            type:Object,
+            value:[]
+          }
+        },
+        attributeChanged: function(name, type){
+          console.log(this.localName + '#' + this.id + ' attribute ' + name +
+            ' was changed to ' + this.getAttribute(name));
+        },
+        _apiReadyChanged:function(e){
+          console.log("_apiReadyChanged!!!!!!!!!!!!!!!!!!!!!!!!");
+        },
+        ready:function(){
+          console.log("ready in expenses-page");
+          console.log(app.api);
+          var element = this;
+          app.api.expenseList(function(resp){
+            console.log("expenses-page: expensesList");
+            console.log(resp);
+            if (!resp.code){
+              element.expenses = resp;
+            }
+          });
+        },
+        attached:function(){
+          console.log("attached in expenses-page");
+        },
+
+      
+      
+      });
+    })();
+  </script>
+
+</dom-module>

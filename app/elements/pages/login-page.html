@@ -66,10 +66,7 @@
         register: function(e){
           console.log("register"); 
           if (this.username && this.username.trim() != ""){
-            console.log("good to go");
             app.api.userCreate(this.username, "Google", app.user.getBasicProfile().getEmail(), this.displayName, app.access_token, function(resp){
-              console.log("userCreate resp");
-              console.log(resp);
               if (!resp.code){
                 app.route = "home";
               }
@@ -80,37 +77,35 @@
           console.log("onSigninFailure")
         },
         onSigninSuccess:function(e, detail, sender) {
-          app.user = gapi.auth2.getAuthInstance().currentUser.get();
-          app.access_token = app.user.getAuthResponse().access_token;
-          var googleEmail = app.user.getBasicProfile().getEmail();
-          var element = this;
-          app.api.authenticate("Google", googleEmail, app.access_token, function(resp){
-            console.log("onSigninSuccess: resp");
-            if (resp.code){
-              console.log("no user defined");
-              console.log(resp.code);
-              if (resp.code == 404){
-                  //user not found
-                  element.hasAccount = false;
-              }
-              else if (resp.code == 403){
-              }
-              else{
-              }
-              //show register page
-            }
-            else{
-              element.isAuthed = true;
-              app.auth = resp;
-              app.route = "home";
-              //redirect to home page
-            }
+          console.log("login-page onSigninSuccess");
+          // app.user = gapi.auth2.getAuthInstance().currentUser.get();
+          // app.access_token = app.user.getAuthResponse().access_token;
+          // var googleEmail = app.user.getBasicProfile().getEmail();
+          // var element = this;
+          // app.api.authenticate("Google", googleEmail, app.access_token, function(resp){
+          //   console.log("onSigninSuccess: resp");
+          //   if (resp.code){
+          //     console.log("resp.code");
+          //     if (resp.code == 404){
+          //         //user not found
+          //         element.hasAccount = false;
+          //     }
+          //     else if (resp.code == 403){
+          //     }
+          //     else{
+          //     }
+          //     //show register page
+          //   }
+          //   else{
+          //     console.log("not resp.code");
+          //     element.isAuthed = true;
+          //     app.auth = resp;
+          //     app.route = "home";
+          //     console.log(app.route);
+          //     //redirect to home page
+          //   }
 
-          });
-
-
-          console.log(app.user);
-          console.log(app.access_token);
+          // });
       }//onSuccessLogin
       
       
