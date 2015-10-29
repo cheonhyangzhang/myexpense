@@ -67,7 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         client-id="659023611005-orca8p6dt24i2gg5sfq0p1om7gmnvnjq.apps.googleusercontent.com"
         scopes="email"></google-signin>
 
-      <paper-drawer-panel>
+      <paper-drawer-panel id="paperDrawerPanel">
          <paper-scroll-header-panel drawer fixed>
 
           <!-- Drawer Toolbar -->
@@ -77,12 +77,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <!-- Drawer Content -->
           <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-            <a data-route="home" href="/home">
+            <a data-route="home" href="/home" on-click="onDataRouteClick">
               <iron-icon icon="home"></iron-icon>
               <span>Home</span>
             </a>
 
-            <a data-route="expenses" href="/expenses">
+            <a data-route="expenses" href="/expenses" on-click="onDataRouteClick">
               <iron-icon icon="info"></iron-icon>
               <span>Expenses</span>
             </a>
@@ -168,7 +168,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </platinum-sw-cache>
     </platinum-sw-register>
     -->
-    <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
+  <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
 
     
   </template>

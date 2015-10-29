@@ -21,6 +21,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       document.querySelector('#caching-complete').show();
     }
   };
+  app.onDataRouteClick = function() {
+    var drawerPanel = document.querySelector('#paperDrawerPanel');
+    if (drawerPanel.narrow) {
+      drawerPanel.closeDrawer();
+    }
+  };
 
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page

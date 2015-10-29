@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/google-signin/google-signin.html">
+<link rel="import" href="summary-card.html">
 
 <dom-module id="expenses-page">
   <template>
@@ -21,9 +22,15 @@
       }
     </style>
     <h1>All Expenses</h1>
+    <summary-card expenses="[[expenses]]" title="{{_currentMonth()}}"></summary-card>
     <template is="dom-repeat" items="{{expenses}}">
       <paper-material class="box">
-      <span>{{item.merchant}}</span>
+      <div class="layout horizontal" >
+      <span class="flex">{{filterDates(item.date)}}</span>  <span>{{item.merchant}}</span>
+      </div>
+      <div class="layout horizontal">
+      <span class="flex">{{item.category}}</span> <span>{{item.amount}}</span>
+      </div>
       </paper-material>
     </template>
     <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
@@ -46,8 +53,16 @@
           console.log(this.localName + '#' + this.id + ' attribute ' + name +
             ' was changed to ' + this.getAttribute(name));
         },
+        filterDates:function(date){
+          return date.split('T')[0];
+        },
         _apiReadyChanged:function(e){
           console.log("_apiReadyChanged!!!!!!!!!!!!!!!!!!!!!!!!");
+        },
+        _currentMonth:function(){
+          var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+          var d = new Date();
+          return months[d.getMonth()] + " " + d.getFullYear();
         },
         ready:function(){
           console.log("ready in expenses-page");

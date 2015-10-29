@@ -1,0 +1,96 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
+
+<dom-module id="summary-card">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+      .primary-button {
+        background: #4285f4;
+        color: white;
+      }
+      .box{
+        padding:20px;
+      }
+    </style>
+    <paper-material class="box">
+      <h1><span>{{title}}</span> Summary</h1>
+      <div style="padding:10px;">
+      <b><span>Total: </span><span>{{_getTotal(analysis, 'totalExpense')}}</span></b>
+      </div>
+
+      <div style="padding:10px;">
+      <template is="dom-repeat" items="{{category}}">
+          <paper-card style="padding:5px;margin:5px;">
+            <span>{{item}}</span><span>:</span>
+            <span style="padding-right:20px;">{{_getTotal(analysis, item)}}</span>
+          </paper-card>
+      </template>
+      </div>
+    </paper-material>
+    <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
+  </template>
+
+  <script>
+
+    (function() {
+      'use strict';
+      
+      Polymer({
+        is: 'summary-card',
+        properties: {
+          title:String,
+          analysis:{
+            type:Object,
+            computed: '_computeAnalysis(expenses)'
+          },
+          category:{
+            type:Object,
+            value:[]
+          },
+          expenses:{
+            type:Object,
+            value:[]
+          }
+        },
+        _getTotal:function(analysis, key){
+          return this.analysis[key].toFixed(2);
+        },
+        _computeAnalysis:function(expenses){
+          var ana = {}
+          ana['totalExpense'] = 0;
+          for (var expId in expenses){
+            var exp = expenses[expId];
+            ana['totalExpense'] += exp['amount'];
+            var key = exp['category'].trim();
+            if (this.category.indexOf(key) == -1){
+              ana[key] = 0;
+              this.category.push(key);
+            }
+            ana[key] += exp['amount'];
+          }
+          this.category = this.category.slice();
+          return ana;
+        },
+        filterDates:function(date){
+          return date.split('T')[0];
+        },
+        ready:function(){
+          console.log("ready");
+          console.log(this.expenses);
+        }
+
+      
+      
+      });
+    })();
+  </script>
+
+</dom-module>
