@@ -81,7 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.services = {
     getAllExpenses: function(){
       console.log(this);
-      app.api.expenseList(function(resp){
+      app.api.expenseList(null, null, function(resp){
         console.log("getAllExpenses");
         console.log(resp);
       }); 
@@ -90,8 +90,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   app.ajax = function(method, theUrl,data, callback)
   {
-    console.log("app.ajax");
-    console.log(app.api.token);
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
       if (xmlHttp.readyState == 4)
@@ -128,9 +126,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       });
     },
-    expenseList:function(callback){
+    expenseList:function(after, before, callback){
       console.log("expenseList");
-      app.ajax("GET", app.api_url + "expenses" + "?username="+this.user.username, "", function(resp){
+      var query = "?username="+this.user.username;
+      if (after){
+        query += "&after=" + after;
+      }
+      if (before){
+        query += "&before=" + before;
+      }
+      app.ajax("GET", app.api_url + "expenses" + query, "", function(resp){
         callback(resp);
       });
     },

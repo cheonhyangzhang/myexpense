@@ -1,0 +1,107 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
+<link rel="import" href="summary-card.html">
+
+<dom-module id="history-page">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+      .primary-button {
+        background: #4285f4;
+        color: white;
+      }
+      .box{
+        padding:20px;
+      }
+    </style>
+    <h1>History</h1>
+    <template is="dom-repeat" items="[[periods]]">
+      <summary-card expenses="{{_getExpenses(expenses, item)}}" title="{{item}}"></summary-card>
+    </template>
+    <!-- <summary-card expenses="[[expenses]]" title="History"></summary-card> -->
+
+    <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
+  </template>
+
+  <script>
+
+    (function() {
+      'use strict';
+      Polymer({
+        is: 'history-page',
+        properties: {
+          expenses:{
+            type:Object,
+            value:[]
+          },
+          limit:{
+            type:Number,
+            value:5
+          },
+          periods:{
+            type:Object,
+            value:[]
+          }
+        },
+        _getExpenses: function(expenses, key){
+          console.log("_getExpenses");
+          console.log(expenses);
+          console.log(key);
+          return expenses[key];
+        },
+        filterDates:function(date){
+          return date.split('T')[0];
+        },
+        _currentMonth:function(){
+          var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+          var d = new Date();
+          return months[d.getMonth()] + " " + d.getFullYear();
+        },
+        ready:function(){
+          console.log("ready in expenses-page");
+          console.log(app.api);
+          var element = this;
+          element.expenses = [];
+          for (var i = 0; i < this.limit; i ++){
+            var after = new Date(); 
+            var before = new Date();
+            after.setMonth(after.getMonth() - i);
+            before.setMonth(before.getMonth() - i + 1);
+            this.periods.push(after.getFullYear() + "-" + after.getMonth());
+            var after_str = after.getFullYear() + "/" + after.getMonth() + "/1";
+            var before_str = before.getFullYear() + "/" + before.getMonth() + "/1";
+            console.log(after_str + " - " + before_str);
+            app.api.expenseList(after_str, before_str,  function(resp){
+              if (!resp.code){
+                console.log("expenses-page: expensesList");
+                if (resp.length != 0){
+                  console.log(resp.length);
+                  var date = resp[0].date.split('T')[0];
+                  var date_label = date.split('-')[0] +  "-" + date.split('-')[1] 
+                  console.log(date);
+                  element.expenses[date_label] = resp;
+                }
+              }
+            });
+          }
+          this.periods = this.periods.slice();
+          
+        },
+        attached:function(){
+          console.log("attached in expenses-page");
+        },
+
+      
+      
+      });
+    })();
+  </script>
+
+</dom-module>

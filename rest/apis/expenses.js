@@ -53,8 +53,16 @@ module.exports = function (apiRoutes) {
 			if (tokenUser){
 				if (req.query.username){
 					var username = req.query.username;
+					var query = {owner:username};
+					query['date'] = {};
+					if (req.query.after){
+						query['date']["$gte"] = new Date(req.query.after);  
+					}
+					if (req.query.before){
+						query['date']["$lt"] =  new Date(req.query.before)
+					}
 					if (tokenUser.username == username){
-						var expenses = Expense.find({owner:username}).then(function(expenses){
+						var expenses = Expense.find(query).then(function(expenses){
 							console.log("expenses");
 							console.log(expenses);
 							res.json(expenses);

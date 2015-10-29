@@ -86,6 +86,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <iron-icon icon="info"></iron-icon>
               <span>Expenses</span>
             </a>
+            <a data-route="history" href="/history" on-click="onDataRouteClick">
+              <iron-icon icon="info"></iron-icon>
+              <span>History</span>
+            </a>
           </paper-menu>
         </paper-scroll-header-panel>
       <!-- Main Area -->
@@ -128,23 +132,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <section data-route="expenses">
                 <expenses-page ></expenses-page>
             </section>
+            <section data-route="history">
+                <history-page ></history-page>
+            </section>
             </template>
 
-            <section data-route="user-info">
-              <paper-material elevation="1">
-                <h2 class="page-title">
-                User:<span>{{params.name}}</span>
-                </h2>
-                <div>This is <span>{{params.name}}</span>'s section</div>
-              </paper-material>
-            </section>
-
-            <section data-route="contact">
-              <paper-material elevation="1">
-                <h2 class="page-title">Contact</h2>
-                <p>This is the contact section</p>
-              </paper-material>
-            </section>
+   
 
           </iron-pages>
         </div>

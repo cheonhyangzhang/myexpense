@@ -68,7 +68,7 @@
           console.log("ready in expenses-page");
           console.log(app.api);
           var element = this;
-          app.api.expenseList(function(resp){
+          app.api.expenseList(null, null, function(resp){
             console.log("expenses-page: expensesList");
             console.log(resp);
             if (!resp.code){
