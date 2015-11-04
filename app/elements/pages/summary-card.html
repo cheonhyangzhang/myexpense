@@ -64,15 +64,11 @@
           return this.analysis[key].toFixed(2);
         },
         _computeAnalysis:function(expenses){
-          console.log("_computeAnalysis");
-          console.log(expenses);
           var ana = {}
           ana['totalExpense'] = 0;
           for (var expId in expenses){
             var exp = expenses[expId];
             ana['totalExpense'] += exp['amount'];
-            console.log(exp);
-            console.log(exp['category']);
             var key = exp['category'].trim();
             if (this.category.indexOf(key) == -1){
               ana[key] = 0;

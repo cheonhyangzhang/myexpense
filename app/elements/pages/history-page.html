@@ -22,11 +22,9 @@
       }
     </style>
     <h1>History</h1>
-    <template is="dom-repeat" items="[[periods]]">
-      <summary-card expenses="{{_getExpenses(expenses, item)}}" title="{{item}}"></summary-card>
+    <template is="dom-repeat" items="[[expenses_list]]">
+      <summary-card expenses="{{item.data}}" title="{{item.date}}"></summary-card>
     </template>
-    <!-- <summary-card expenses="[[expenses]]" title="History"></summary-card> -->
-
     <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
   </template>
 
@@ -39,13 +37,17 @@
         properties: {
           expenses:{
             type:Object,
-            value:[]
+            value:{}
           },
           limit:{
             type:Number,
             value:5
           },
           periods:{
+            type:Object,
+            value:[]
+          },
+          expenses_list:{
             type:Object,
             value:[]
           }
@@ -68,25 +70,35 @@
           console.log("ready in expenses-page");
           console.log(app.api);
           var element = this;
-          element.expenses = [];
+          element.expenses_list = [];
+          var index = {};
           for (var i = 0; i < this.limit; i ++){
             var after = new Date(); 
             var before = new Date();
             after.setMonth(after.getMonth() - i);
             before.setMonth(before.getMonth() - i + 1);
-            this.periods.push(after.getFullYear() + "-" + after.getMonth());
+            var date_label = after.getFullYear() + "-" + after.getMonth();
+            this.periods.push(date_label);
+            index[date_label] = i;
+            element.expenses_list[i] = {
+              'date':date_label,
+              'data':[]
+            };
+            console.log("index dict");
+            console.log(index);
             var after_str = after.getFullYear() + "/" + after.getMonth() + "/1";
             var before_str = before.getFullYear() + "/" + before.getMonth() + "/1";
             console.log(after_str + " - " + before_str);
-            app.api.expenseList(after_str, before_str,  function(resp){
+            app.api.expenseList(after_str, before_str, function(resp){
               if (!resp.code){
-                console.log("expenses-page: expensesList");
                 if (resp.length != 0){
-                  console.log(resp.length);
                   var date = resp[0].date.split('T')[0];
-                  var date_label = date.split('-')[0] +  "-" + date.split('-')[1] 
-                  console.log(date);
-                  element.expenses[date_label] = resp;
+                  var date_label = date.split('-')[0] +  "-" + Number(date.split('-')[1])
+                  element.expenses_list[index[date_label]] = {
+                    'date':date_label,
+                    'data':resp
+                  };
+                  element.expenses_list = element.expenses_list.slice();
                 }
               }
             });
