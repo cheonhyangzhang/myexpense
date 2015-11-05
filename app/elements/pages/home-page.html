@@ -19,85 +19,65 @@
         padding:20px;
       }
     </style>
-<!--     <paper-material class="box" elevation="1">
-      <h1>Import Expenses</h1>
-        <div id="dvImportSegments" class="fileupload ">
-        <fieldset>
-            <legend>Upload your CSV File</legend>
-                <input type="file" name="File Upload" on-change="fileUploaded" id="txtFileUpload" accept=".csv" />
-        </fieldset>
-        </div> 
-        <div style="padding:10px;">
-          <paper-button on-click="importExpenses" class="primary-button">Import</paper-button>
-        </div>
-        <template is="dom-repeat" items="{{new_expenses}}">
-          <paper-material class="box">
-              <div class="layout horizontal" >
-              <span class="flex">{{item.date}}</span>  <span>{{item.merchant}}</span>
-              </div>
-              <div class="layout horizontal">
-              <span class="flex">{{item.category}}</span> <span>{{item.amount}}</span>
-              </div>
-          </paper-material>
-
-        </template>
-    </paper-material> -->
-    <paper-material class="box" elevation="1">
-      <h1>Add new Expense</h1>
-      <div>
-        <paper-input value="{{new_expense.date}}" label="Date m/d/yyyy"><paper-input> 
+    <h1>Current Month Expenses</h1>
+    <summary-card expenses="[[expenses]]" title="{{_currentMonth()}}"></summary-card>
+    <template is="dom-repeat" items="{{expenses}}">
+      <paper-material class="box">
+      <div class="layout horizontal" >
+      <span class="flex">{{filterDates(item.date)}}</span>  <span>{{item.merchant}}</span>
       </div>
-      <div>
-        <paper-input value="{{new_expense.merchant}}" label="Merchant"><paper-input> 
+      <div class="layout horizontal">
+      <span class="flex">{{item.category}}</span> <span>{{item.amount}}</span>
       </div>
-      <div>
-        <paper-input value="{{new_expense.description}}" label="Description"><paper-input> 
-      </div>
-      <div>
-        <paper-input value="{{new_expense.category}}" label="Category"><paper-input> 
-      </div>
-      <div>
-        <paper-input value="{{new_expense.subcategory}}" label="Subcategory"><paper-input> 
-      </div>
-      <div>
-        <paper-input value="{{new_expense.amount}}" label="Amount"><paper-input> 
-      </div>
-      <div>
-        <paper-button on-click="add_expense" class="primary-button"> Add </paper-button>
-      </div>
-    </paper-material>
-
+      </paper-material>
+    </template>
+    <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
   </template>
+
   <script>
+
     (function() {
       'use strict';
       
       Polymer({
         is: 'home-page',
         properties: {
-          hasAccount: {
-            type: Boolean,
-            value: false,
-            notify: true
-          },
           expenses:{
             type:Object,
             value:[]
-          },
-          new_expenses:{
-            type:Object,
-            value:[]
-          },
-          new_expense:{
-            type:Object,
-            value:{}
           }
         },
-        
+        attributeChanged: function(name, type){
+          console.log(this.localName + '#' + this.id + ' attribute ' + name +
+            ' was changed to ' + this.getAttribute(name));
+        },
+        filterDates:function(date){
+          return date.split('T')[0];
+        },
+        _apiReadyChanged:function(e){
+          console.log("_apiReadyChanged!!!!!!!!!!!!!!!!!!!!!!!!");
+        },
+        _currentMonth:function(){
+          var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+          var d = new Date();
+          return months[d.getMonth()] + " " + d.getFullYear();
+        },
+        ready:function(){
+          console.log("ready in expenses-page");
+          console.log(app.api);
+          var element = this;
+          app.api.expenseList(null, null, function(resp){
+            console.log("expenses-page: expensesList");
+            console.log(resp);
+            if (!resp.code){
+              element.expenses = resp;
+            }
+          });
+        },
+        attached:function(){
+          console.log("attached in expenses-page");
+        },
 
-        list_expenses:function(){
-        }
-        
       
       
       });

@@ -1,0 +1,91 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
+
+<dom-module id="add-expense-page">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+      .primary-button {
+        background: #4285f4;
+        color: white;
+      }
+      .box{
+        padding:20px;
+      }
+    </style>
+    <paper-material class="box" elevation="1">
+      <h1>Add new Expense</h1>
+      <div>
+        <paper-input value="{{new_expense.date}}" label="Date m/d/yyyy"><paper-input> 
+      </div>
+      <div>
+        <paper-input value="{{new_expense.merchant}}" label="Merchant"><paper-input> 
+      </div>
+      <div>
+        <paper-input value="{{new_expense.description}}" label="Description"><paper-input> 
+      </div>
+      <div>
+        <paper-input value="{{new_expense.category}}" label="Category"><paper-input> 
+      </div>
+      <div>
+        <paper-input value="{{new_expense.subcategory}}" label="Subcategory"><paper-input> 
+      </div>
+      <div>
+        <paper-input value="{{new_expense.amount}}" label="Amount"><paper-input> 
+      </div>
+      <div>
+        <paper-button on-click="add_expense" class="primary-button"> Add </paper-button>
+      </div>
+    </paper-material>
+
+  </template>
+  <script>
+    (function() {
+      'use strict';
+      
+      Polymer({
+        is: 'add-expense-page',
+        properties: {
+          hasAccount: {
+            type: Boolean,
+            value: false,
+            notify: true
+          },
+          expenses:{
+            type:Object,
+            value:[]
+          },
+          new_expenses:{
+            type:Object,
+            value:[]
+          },
+          new_expense:{
+            type:Object,
+            value:{}
+          }
+        },
+        add_expense:function(index){
+          var element = this;
+          app.api.expenseCreate(this.new_expense, function(resp){
+            if (resp.code){
+              console.log("Failed to Save");
+            }
+            else{
+              console.log("Saved");
+            }
+          });
+        }
+
+      
+      
+      });
+    })();
+  </script>
+
+</dom-module>
