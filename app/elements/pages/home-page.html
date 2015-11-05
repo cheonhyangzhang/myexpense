@@ -19,7 +19,7 @@
         padding:20px;
       }
     </style>
-    <paper-material class="box" elevation="1">
+<!--     <paper-material class="box" elevation="1">
       <h1>Import Expenses</h1>
         <div id="dvImportSegments" class="fileupload ">
         <fieldset>
@@ -27,11 +27,9 @@
                 <input type="file" name="File Upload" on-change="fileUploaded" id="txtFileUpload" accept=".csv" />
         </fieldset>
         </div> 
-        <!-- <template is="dom-if" if="{{}}"> -->
         <div style="padding:10px;">
           <paper-button on-click="importExpenses" class="primary-button">Import</paper-button>
         </div>
-        <!-- </tempalte> -->
         <template is="dom-repeat" items="{{new_expenses}}">
           <paper-material class="box">
               <div class="layout horizontal" >
@@ -43,7 +41,7 @@
           </paper-material>
 
         </template>
-    </paper-material>
+    </paper-material> -->
     <paper-material class="box" elevation="1">
       <h1>Add new Expense</h1>
       <div>
@@ -95,65 +93,11 @@
             value:{}
           }
         },
-        importExpenses:function(){
-          for (var expId in this.new_expenses){
-            var exp = this.new_expenses[expId];
-            this.new_expense = exp;
-            this.add_expense();
-          }
-          this.new_expense = {};
-          this.new_expenses = [];
-        },
-        fileUploaded:function(evt){
-          console.log("fileUploaded");
-          var element = this;
-           var data = null;
-            var file = evt.target.files[0];
-            var reader = new FileReader();
-            reader.readAsText(file);
-            reader.onload = function(event) {
-                var csvData = event.target.result;
-                var rows = csvData.split('\n');
-                element.new_expenses = []
-                for (var rowNo in rows){
-                  var row = rows[rowNo].split(',');
-                  element.new_expenses.push({
-                    'date':row[0],
-                    'merchant':row[1],
-                    'amount':row[2],
-                    'category':row[3],
-                  })
-                }
-                element.new_expenses = element.new_expenses.slice();
-              
-            };
-            reader.onerror = function() {
-                alert('Unable to read ' + file.fileName);
-            };
-        },
-        showMessage:function(msg){
-          app.toastMessage = msg;
-          document.querySelector('#general-message').show();
-        },
+        
+
         list_expenses:function(){
-        },
-        add_expense:function(){
-          console.log("add_expense");
-          console.log(this.new_expense);
-          console.log(app.api);
-          var element = this;
-          app.api.expenseCreate(this.new_expense, function(resp){
-            console.log("add_expense in homepage");
-            console.log(resp);
-            if (resp.code){
-              element.showMessage("Failed to save");
-            }
-            else{
-              element.showMessage("Saved");
-              element.new_expense = {}
-            }
-          });
         }
+        
       
       
       });

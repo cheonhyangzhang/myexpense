@@ -59,9 +59,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 </head>
 
+<style>
+.down-right-button{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+}
+#general-message{
+  position:fixed; 
+  bottom:20px;
+  left:20px;
+}
+
+</style>
+
 <body unresolved class="fullbleed layout vertical">
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
+
+      <upload-page id="upload"></upload-page>
+ 
 
       <google-signin id="login-button" width="wide" height="tall"
         client-id="659023611005-orca8p6dt24i2gg5sfq0p1om7gmnvnjq.apps.googleusercontent.com"
@@ -141,8 +158,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           </iron-pages>
         </div>
+        <paper-fab on-click="upload" class="down-right-button" icon="file-upload"></paper-fab>
       </paper-scroll-header-panel>
- 
+
     </paper-drawer-panel>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
@@ -171,6 +189,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.user = gapi.auth2.getAuthInstance().currentUser.get();
       app.access_token = app.user.getAuthResponse().access_token;
       var googleEmail = app.user.getBasicProfile().getEmail();
+      app.upload = function(){
+        console.log("app.upload"); 
+        var dialog = document.querySelector('#upload');
+        console.log(dialog);
+        dialog.open();
+      }
+      app.showMessage =function(msg){
+        app.toastMessage = msg;
+        document.querySelector('#general-message').show();
+      }
       app.api.authenticate("Google", googleEmail, app.access_token, function(resp){
         if (resp.code){
           if (resp.code == 404){

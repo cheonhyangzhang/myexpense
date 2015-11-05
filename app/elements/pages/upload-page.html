@@ -1,0 +1,211 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
+
+<dom-module id="upload-page">
+    <template>
+      <style>
+      .primary-button {
+        background: #4285f4;
+        color: white;
+      }
+      .box{
+        padding:20px; 
+      }
+      .avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 20px;
+        box-sizing: border-box;
+        background-color: #DDD;
+      }
+      .letter {
+        border-radius: inherit;
+        color:white;
+        width: 100%;
+        height: 100%;
+        transition: opacity 200ms ease-in-out 100ms;
+        will-change: opacity;
+        text-transform: uppercase;
+      }
+      </style>
+       <paper-dialog on-iron-overlay-closed="_onClosed" style="position:fixed;bottom:0px;width:80%;background-color:white;" with-backdrop="true" id="upload-dialog" entry-animation="scale-up-animation"
+              exit-animation="fade-out-animation">
+        <h1>Import Expenses</h1> 
+        <div id="dvImportSegments" class="fileupload ">
+        <fieldset>
+            <legend>Upload your CSV File</legend>
+            <input type="file" name="File Upload" on-change="fileUploaded" id="txtFileUpload" accept=".csv" />
+        </fieldset>
+        </div> 
+        <div class="layout horizontal">
+          <div class="flex">
+            <template is="dom-if" if="{{uploaded}}">
+              <span>{{success}}</span>/<span>{{new_expenses.length}}</span> has been uploaded while 
+            </template>
+          </div>
+          <paper-button on-click="importExpenses" class="primary-button">Import</paper-button>
+        </div>
+        <paper-dialog-scrollable>
+        <template is="dom-repeat" items="{{new_expenses}}">
+        <paper-material class="box" style="margin-top:5px;margin-bottom:5px;">
+            <div class="layout horizontal" >
+              <div class="layout horizontal">
+                <div class="center-center">
+                <template is="dom-if" if="{{_showOk(item.uploaded)}}">
+                  <iron-icon icon="done"></iron-icon>
+                </template>
+                <template is="dom-if" if="{{_showFailed(item.uploaded)}}">
+                  Failed
+                  <iron-icon icon="close"></iron-icon>
+                </template>
+                </div>
+                <div class="avatar">
+                    <span style="backgroundcolor:blue;color:white;" class="letter layout horizontal center-center" >{{_plusOne(index)}}</span>
+                </div>
+              </div>
+              <div style="padding-left:10px;" class="flex layout vertical" >
+                <div class="layout horizontal" >
+                  <span class="flex">{{item.date}}</span>  <span>{{item.merchant}}</span>
+                  </div>
+                  <div class="layout horizontal">
+                  <span class="flex">{{item.category}}</span> <span>{{item.amount}}</span>
+                </div>
+              </div>
+            </div>
+
+        </paper-material>
+       </paper-dialog-scrollable>
+      </paper-dialog>
+      </template>
+    
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+      
+      Polymer({
+        is: 'upload-page',
+        properties: {
+          success:{
+            type:Number,
+            value:0
+          },
+          failed:{
+            type:Number,
+            value:0
+          },
+          uploaded:{
+            type:Boolean,
+            value:false
+          }
+        },
+        _showOk:function(uploaded){
+          if (uploaded == 'ok'){
+            return true;
+          }
+          else{
+            return false;
+          }
+        },
+        _plusOne:function(index){
+          return index + 1;
+        },
+        _onClosed:function(e){
+          this.new_expenses = [];
+          this.uploaded = false;
+        },
+        _showFailed:function(uploaded){
+          if (uploaded == 'failed'){
+            return true;
+          }
+          else{
+            return false;
+          }
+        },
+        open:function(){
+          var dialog = document.querySelector('#upload-dialog');
+          dialog.open();
+        },
+        _uploadFeedback:function(){
+          console.log("_uploadFeedback");
+          console.log(this.uploadResult);
+          var res = this.uploadResult['success'] + "/" + (this.uploadResult['success'] + this.uploadResult['failed']) + " have been uploaded.";
+          return res;
+        },
+        add_expense:function(index){
+          var element = this;
+          app.api.expenseCreate(this.new_expense, function(resp){
+            if (resp.code){
+              console.log("Failed to Save");
+              element.new_expenses[index]['uploaded'] = 'failed';
+              element.failed+=1;
+            }
+            else{
+              console.log("Saved");
+              element.success+=1;
+              element.new_expenses[index]['uploaded'] = 'ok';
+            }
+            var dict = element.new_expenses[index];
+            element.new_expenses[index] = {
+                  'date':dict.date,
+                  'merchant':dict.merchant,
+                  'amount':dict.amount,
+                  'category':dict.category,
+                  'uploaded':dict.uploaded
+            }
+            element.new_expenses = element.new_expenses.slice();
+            
+          });
+        },
+        fileUploaded:function(evt){
+          var element = this;
+          var data = null;
+          var file = evt.target.files[0];
+          var reader = new FileReader();
+          reader.readAsText(file);
+          reader.onload = function(event) {
+              var csvData = event.target.result;
+              var rows = csvData.split('\n');
+              element.new_expenses = []
+              for (var rowNo in rows){
+                var row = rows[rowNo].split(',');
+                element.new_expenses.push({
+                  'date':row[0],
+                  'merchant':row[1],
+                  'amount':row[2],
+                  'category':row[3],
+                  'uploaded':'notyet'
+                })
+              }
+              element.new_expenses = element.new_expenses.slice();
+            
+          };
+          reader.onerror = function() {
+              alert('Unable to read ' + file.fileName);
+          };
+        },
+        importExpenses:function(){
+          this.success = 0;
+          this.failed = 0;
+          for (var expId in this.new_expenses){
+            var exp = this.new_expenses[expId];
+            this.new_expense = exp;
+            this.add_expense(expId);
+          }
+          this.uploaded = true;
+          // this.new_expense = {};
+          // this.new_expenses = [];
+          app.showMessage("Saved");
+          // var dialog = document.querySelector('#upload-dialog');
+          // dialog.close();
+
+        }     
+      
+      });
+    })();
+  </script>
+
+</dom-module>
