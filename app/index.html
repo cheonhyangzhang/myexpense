@@ -143,13 +143,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             <template is="dom-if" if="{{ready}}"> 
             <section data-route="home">
+              <template is="dom-if" if="{{isEqual(route, 'home')}}" restamp="true">
                 <home-page></home-page>
+              </template>
             </section>
             <section data-route="expenses">
-                <expenses-page period="{{params.period}}"></expenses-page>
+              <template is="dom-if" if="{{isEqual(route, 'expenses')}}" restamp="true">
+                <expenses-page restamp="true" period="{{params.period}}"></expenses-page>
+              </template>
             </section>
             <section data-route="history">
+              <template is="dom-if" if="{{isEqual(route, 'history')}}" restamp="true">
                 <history-page ></history-page>
+              </template>
             </section>
             <section data-route="addexpense">
                 <add-expense-page ></add-expense-page>
@@ -193,6 +199,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.upload = function(){
         var dialog = document.querySelector('#upload');
         dialog.open();
+      }
+      app.isEqual = function(x, y) {
+        return x === y;
       }
       app.showMessage =function(msg){
         app.toastMessage = msg;
