@@ -64,6 +64,10 @@
           var dialog = document.querySelector('#upload-dialog');
           dialog.open();
         },
+        _onClosed:function(e){
+          this.new_expenses = [];
+          this.uploaded = false;
+        },
         _uploadFeedback:function(){
           console.log("_uploadFeedback");
           console.log(this.uploadResult);

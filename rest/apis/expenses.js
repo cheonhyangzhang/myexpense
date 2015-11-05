@@ -62,10 +62,11 @@ module.exports = function (apiRoutes) {
 				}
 				console.log("before removing");
 				console.log(query);
-				var expenses = Expense.find(query).remove(function(expenses){
+				var expenses = Expense.find().remove(query, function(err, removed){
 					console.log("expenses");
-					console.log(expenses);
-					res.json(expenses);
+					console.log(err);
+					console.log(removed);
+					res.json(removed);
 				});
 			}
 			else{

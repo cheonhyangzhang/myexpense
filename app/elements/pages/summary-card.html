@@ -31,6 +31,7 @@
         <paper-button dialog-confirm on-click="_delete">Delete</paper-button>
       </div>
     </paper-dialog>
+
     <paper-material class="box">
       <div class="layout horizontal">
         <a href="{{_computeLink(period)}}">
@@ -39,6 +40,7 @@
         <span style="font-weight:bold;" class="flex"> Summary</span> 
         <paper-button on-click="_tryDelete" class="danger-button">Delete</paper-button>
       </div>
+      <template is="dom-if" if="{{shouldShow}}">
       <div style="padding:10px;">
       <b><span>Total: </span><span>{{_getTotal(analysis, 'totalExpense')}}</span></b>
       </div>
@@ -51,7 +53,9 @@
           </paper-card>
       </template>
       </div>
+      </template>
     </paper-material>
+
     <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
   </template>
 
@@ -73,17 +77,30 @@
             type:Object,
             value:[]
           },
+          shouldShow:{
+            type:Boolean,
+            computed:'_computeShouldShow(expenses)'
+          },
           deleteDialog:{
             type:Boolean,
             value:false
           },
           expenses:{
             type:Object,
-            value:[]
+            value:[],
+            notify:true
           }
         },
         _computeLink:function(period){
           return "expenses/" + period;
+        },
+        _computeShouldShow:function(expenses){
+          if (expenses && expenses.length > 0){
+            return true;
+          }
+          else{
+            return false;
+          }
         },
         _tryDelete:function(e){
           this.deleteDialog = true;
@@ -93,15 +110,28 @@
           console.log("delete this month");
           var period = this.period.split('-')[0] + "/" + this.period.split('-')[1];
           console.log("period");
+          var summary_card = this;
           app.api.expenseListRemoveMonth(period, function(resp){
             console.log("summary-card remove period");
             console.log(resp);
+            if (!resp.code){
+              summary_card.expenses = [];
+            }
           });
         },
         _getTotal:function(analysis, key){
-          return this.analysis[key].toFixed(2);
+          console.log("_getTotal");
+          console.log(analysis);
+          console.log(key);
+          if (key in this.analysis){
+            return this.analysis[key].toFixed(2);
+          }
+          else{
+            return 0;
+          }
         },
         _computeAnalysis:function(expenses){
+          console.log("_computeAnalysis");
           var ana = {}
           ana['totalExpense'] = 0;
           for (var expId in expenses){
