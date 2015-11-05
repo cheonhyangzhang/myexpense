@@ -115,16 +115,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return str.join("&");
     },
     authenticate:function(from, userid, token, callback){
-      console.log("app.api.authenticate");
-      console.log(from, userid, token);
       var api = this;
       app.ajax("POST", app.api_url + "authenticate", "from=Google&userid="+userid+"&token="+token, function(resp){
         api.token = resp.token;
         api.user = resp.user;
         api.isReady = true;
         callback(resp);
-
       });
+    },
+    expenseListMonth:function(period, callback){
+      console.log("expenseListMonth");
+      var after = period + "/1";
+      var year = period.split("/")[0]; 
+      var month  = period.split("/")[0]; 
+      var beforeTime = new Date(year, month, 1);
+      beforeTime.setMonth(month + 1);
+      var before = beforeTime.getFullYear() + "/" + beforeTime.getMonth() + "/1";
+      this.expensesList(after, before, callback);
     },
     expenseList:function(after, before, callback){
       console.log("expenseList");

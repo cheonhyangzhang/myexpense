@@ -32,9 +32,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.route = 'home';
     });
 
-    page('/expenses', scrollToTop, function() {
+    page('/expenses/:period', scrollToTop, function(data) {
       console.log("/expenses");
       app.route = 'expenses';
+      app.params = data.params;
+      this.params = data.params;
+      console.log(app.params);
     });
 
     page('/history', scrollToTop, function() {

@@ -47,10 +47,6 @@
             value:[]
           }
         },
-        attributeChanged: function(name, type){
-          console.log(this.localName + '#' + this.id + ' attribute ' + name +
-            ' was changed to ' + this.getAttribute(name));
-        },
         filterDates:function(date){
           return date.split('T')[0];
         },
@@ -63,19 +59,14 @@
           return months[d.getMonth()] + " " + d.getFullYear();
         },
         ready:function(){
-          console.log("ready in expenses-page");
-          console.log(app.api);
           var element = this;
           app.api.expenseList(null, null, function(resp){
-            console.log("expenses-page: expensesList");
-            console.log(resp);
             if (!resp.code){
               element.expenses = resp;
             }
           });
         },
         attached:function(){
-          console.log("attached in expenses-page");
         },
 
       

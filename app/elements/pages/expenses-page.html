@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/google-signin/google-signin.html">
 <link rel="import" href="summary-card.html">
+<link rel="import" href="expenses-list.html">
 
 <dom-module id="expenses-page">
   <template>
@@ -21,9 +22,9 @@
         padding:20px;
       }
     </style>
-    <h1>All Expenses</h1>
-    <summary-card expenses="[[expenses]]" title="{{_currentMonth()}}"></summary-card>
-    <template is="dom-repeat" items="{{expenses}}">
+    <summary-card expenses="[[expenses]]" title="{{period}}"></summary-card>
+    <expenses-list expenses="{{expenses}}"></expenses-list>
+    <!-- <template is="dom-repeat" items="{{expenses}}">
       <paper-material class="box">
       <div class="layout horizontal" >
       <span class="flex">{{filterDates(item.date)}}</span>  <span>{{item.merchant}}</span>
@@ -32,7 +33,7 @@
       <span class="flex">{{item.category}}</span> <span>{{item.amount}}</span>
       </div>
       </paper-material>
-    </template>
+    </template> -->
     <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
   </template>
 
@@ -47,28 +48,34 @@
           expenses:{
             type:Object,
             value:[]
-          }
+          },
+          period:String,
         },
-        attributeChanged: function(name, type){
-          console.log(this.localName + '#' + this.id + ' attribute ' + name +
-            ' was changed to ' + this.getAttribute(name));
+        listeners: {
+            'period': '_onPeriodChange'
         },
-        filterDates:function(date){
-          return date.split('T')[0];
-        },
-        _apiReadyChanged:function(e){
-          console.log("_apiReadyChanged!!!!!!!!!!!!!!!!!!!!!!!!");
-        },
+        
         _currentMonth:function(){
           var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
           var d = new Date();
           return months[d.getMonth()] + " " + d.getFullYear();
         },
+        _onPeriodChange:function(e){
+          console.log("_onPeriodChange !!!!!!!!!!!!!!!!!!!!!!!!!!");
+          console.log(e);
+          console.log(this.period);
+        },
         ready:function(){
-          console.log("ready in expenses-page");
-          console.log(app.api);
+          console.log("ready in expenses-page get period in expenses-page");
+          console.log(this.period);
+          var year = this.period.split('-')[0];
+          var month = this.period.split('-')[1];
+          var start = year + "/" + month + "/1";
+          var endTime = new Date(year, month, "1");
+          endTime.setMonth(month + 1);
+          var end = endTime.getFullYear() + "/" + endTime.getMonth() + "/1";
           var element = this;
-          app.api.expenseList(null, null, function(resp){
+          app.api.expenseList(start, end, function(resp){
             console.log("expenses-page: expensesList");
             console.log(resp);
             if (!resp.code){
@@ -77,7 +84,6 @@
           });
         },
         attached:function(){
-          console.log("attached in expenses-page");
         },
 
       

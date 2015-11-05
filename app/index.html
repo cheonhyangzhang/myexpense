@@ -151,7 +151,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <home-page></home-page>
             </section>
             <section data-route="expenses">
-                <expenses-page ></expenses-page>
+                <expenses-page period="{{params.period}}"></expenses-page>
             </section>
             <section data-route="history">
                 <history-page ></history-page>
@@ -192,14 +192,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
   <script>
     document.addEventListener("google-signin-success", function(e) {
-      console.log("index.html google-signin-success");
       app.user = gapi.auth2.getAuthInstance().currentUser.get();
       app.access_token = app.user.getAuthResponse().access_token;
       var googleEmail = app.user.getBasicProfile().getEmail();
       app.upload = function(){
-        console.log("app.upload"); 
         var dialog = document.querySelector('#upload');
-        console.log(dialog);
         dialog.open();
       }
       app.showMessage =function(msg){

@@ -11,5 +11,6 @@ module.exports = mongoose.model('Expense', new Schema({
     subcategory: String,
     amount: Number,
     unusual: Boolean,
+    verified:Boolean,
     owner: String
 }));

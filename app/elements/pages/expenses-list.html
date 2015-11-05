@@ -1,0 +1,107 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
+
+<dom-module id="expenses-list">
+  <style>
+  .box{
+        padding:20px; 
+      }
+  .avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 20px;
+        box-sizing: border-box;
+        background-color: #DDD;
+  }
+  .letter {
+    border-radius: inherit;
+    color:white;
+    width: 100%;
+    height: 100%;
+    transition: opacity 200ms ease-in-out 100ms;
+    will-change: opacity;
+    text-transform: uppercase;
+  }
+  </style>
+  <template>
+    <template is="dom-repeat" items="{{expenses}}">
+      <paper-material class="box" style="margin-top:5px;margin-bottom:5px;">
+          <div class="layout horizontal" >
+            <div class="layout horizontal">
+              <div class="center-center">
+              <template is="dom-if" if="{{_showOk(item.uploaded)}}">
+                <iron-icon icon="done"></iron-icon>
+              </template>
+              <template is="dom-if" if="{{_showFailed(item.uploaded)}}">
+                Failed
+                <iron-icon icon="close"></iron-icon>
+              </template>
+              </div>
+              <div class="avatar">
+                  <span style="backgroundcolor:blue;color:white;" class="letter layout horizontal center-center" >{{_plusOne(index)}}</span>
+              </div>
+            </div>
+            <div style="padding-left:10px;" class="flex layout vertical" >
+              <div class="layout horizontal" >
+                <span class="flex">{{filterDates(item.date)}}</span>  <span>{{item.merchant}}</span>
+                </div>
+                <div class="layout horizontal">
+                <span class="flex">{{item.category}}</span> <span>{{item.amount}}</span>
+              </div>
+            </div>
+          </div>
+
+      </paper-material>
+      </template> 
+
+    </template>
+  <script>
+    (function() {
+      'use strict';
+      
+      Polymer({
+        is: 'expenses-list',
+        properties: {
+          expenses:{
+            type:Object,
+            value:[],
+            notify:true
+          }
+        },
+        filterDates:function(date){
+          return date.split('T')[0];
+        },
+        _showOk:function(uploaded){
+          if (uploaded == 'ok'){
+            return true;
+          }
+          else{
+            return false;
+          }
+        },
+        _plusOne:function(index){
+          return index + 1;
+        },
+        _onClosed:function(e){
+          this.new_expenses = [];
+          this.uploaded = false;
+        },
+        _showFailed:function(uploaded){
+          if (uploaded == 'failed'){
+            return true;
+          }
+          else{
+            return false;
+          }
+        },
+
+      
+      
+      });
+    })();
+  </script>
+
+</dom-module>

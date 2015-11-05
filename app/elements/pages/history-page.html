@@ -84,11 +84,8 @@
               'date':date_label,
               'data':[]
             };
-            console.log("index dict");
-            console.log(index);
             var after_str = after.getFullYear() + "/" + after.getMonth() + "/1";
             var before_str = before.getFullYear() + "/" + before.getMonth() + "/1";
-            console.log(after_str + " - " + before_str);
             app.api.expenseList(after_str, before_str, function(resp){
               if (!resp.code){
                 if (resp.length != 0){
@@ -107,7 +104,6 @@
           
         },
         attached:function(){
-          console.log("attached in expenses-page");
         },
 
       
