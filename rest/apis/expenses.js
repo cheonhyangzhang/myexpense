@@ -23,8 +23,6 @@ module.exports = function (apiRoutes) {
 					expense.subcategory = req.body.subcategory;
 					expense.amount = req.body.amount;
 					expense.owner = tokenUser.username;
-					console.log("before save to datastore");
-					console.log(expense);
 					expense.save(function(err, resp){
 						console.log("save result");
 						console.log(err);
@@ -88,9 +86,9 @@ module.exports = function (apiRoutes) {
 				if (req.query.before){
 					query['date']["$lt"] =  new Date(req.query.before)
 				}
+				console.log("try to get expenses");
+				console.log(query);
 				var expenses = Expense.find(query).then(function(expenses){
-					console.log("expenses");
-					console.log(expenses);
 					res.json(expenses);
 				});
 			}

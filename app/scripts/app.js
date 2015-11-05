@@ -131,7 +131,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var beforeTime = new Date(year, month, 1);
       beforeTime.setMonth(month + 1);
       var before = beforeTime.getFullYear() + "/" + beforeTime.getMonth() + "/1";
-      this.expensesList(after, before, callback);
+      this.expenseList(after, before, callback);
     },
     expenseListRemoveMonth:function(period, callback){
       console.log("expenseListMonth");

@@ -120,9 +120,6 @@
           });
         },
         _getTotal:function(analysis, key){
-          console.log("_getTotal");
-          console.log(analysis);
-          console.log(key);
           if (key in this.analysis){
             return this.analysis[key].toFixed(2);
           }
