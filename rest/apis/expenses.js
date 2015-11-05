@@ -46,36 +46,52 @@ module.exports = function (apiRoutes) {
 		
 	});  
 
+	apiRoutes.delete('/expenses', function(req, res){
+		console.log("delete /expenses");
+		permission.userFromToken(req, function(resp){
+			var tokenUser = resp;
+			if (tokenUser){
+				var username = tokenUser.username;
+				var query = {owner:username};
+				query['date'] = {};
+				if (req.query.after){
+					query['date']["$gte"] = new Date(req.query.after);  
+				}
+				if (req.query.before){
+					query['date']["$lt"] =  new Date(req.query.before)
+				}
+				console.log("before removing");
+				console.log(query);
+				var expenses = Expense.find(query).remove(function(expenses){
+					console.log("expenses");
+					console.log(expenses);
+					res.json(expenses);
+				});
+			}
+			else{
+				error.badRequest('Token missing', 'Token is missing or the token is not valid', res);
+			}
+		});	
+	});
 	apiRoutes.get('/expenses', function(req, res) {
 		console.log("get /expnese");
 		permission.userFromToken(req, function(resp){
 			var tokenUser = resp;
 			if (tokenUser){
-				if (req.query.username){
-					var username = req.query.username;
-					var query = {owner:username};
-					query['date'] = {};
-					if (req.query.after){
-						query['date']["$gte"] = new Date(req.query.after);  
-					}
-					if (req.query.before){
-						query['date']["$lt"] =  new Date(req.query.before)
-					}
-					if (tokenUser.username == username){
-						var expenses = Expense.find(query).then(function(expenses){
-							console.log("expenses");
-							console.log(expenses);
-							res.json(expenses);
-						});
-					}
-					else{
-						error.forbidden("Access not allowed", "Not allowed to access expenses data for other users",res);
-					}
+				var username = tokenUser.username;
+				var query = {owner:username};
+				query['date'] = {};
+				if (req.query.after){
+					query['date']["$gte"] = new Date(req.query.after);  
 				}
-				else{
-					console.log(req.query);
-					error.badRequest('Missing required field','username field is missing!',res);
+				if (req.query.before){
+					query['date']["$lt"] =  new Date(req.query.before)
 				}
+				var expenses = Expense.find(query).then(function(expenses){
+					console.log("expenses");
+					console.log(expenses);
+					res.json(expenses);
+				});
 			}
 			else{
 				error.badRequest('Token missing', 'Token is missing or the token is not valid', res);

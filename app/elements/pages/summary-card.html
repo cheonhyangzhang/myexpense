@@ -16,12 +16,29 @@
         background: #4285f4;
         color: white;
       }
+      .danger-button {
+        background: #F44336;
+        color: white;
+      }
       .box{
         padding:20px;
       }
     </style>
+    <paper-dialog style="background-color:white" with-backdrop="true" opened="{{deleteDialog}}">
+      <h2>Are you sure you want to delete <span>{{period}}</span> expenses?</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm on-click="_delete">Delete</paper-button>
+      </div>
+    </paper-dialog>
     <paper-material class="box">
-      <h1><span>{{title}}</span> Summary</h1>
+      <div class="layout horizontal">
+        <a href="{{_computeLink(period)}}">
+        <span style="font-weight:bold;padding-right:10px;" >{{title}}</span>
+        </a>
+        <span style="font-weight:bold;" class="flex"> Summary</span> 
+        <paper-button on-click="_tryDelete" class="danger-button">Delete</paper-button>
+      </div>
       <div style="padding:10px;">
       <b><span>Total: </span><span>{{_getTotal(analysis, 'totalExpense')}}</span></b>
       </div>
@@ -47,6 +64,7 @@
         is: 'summary-card',
         properties: {
           title:String,
+          period:String,
           analysis:{
             type:Object,
             computed: '_computeAnalysis(expenses)'
@@ -55,10 +73,30 @@
             type:Object,
             value:[]
           },
+          deleteDialog:{
+            type:Boolean,
+            value:false
+          },
           expenses:{
             type:Object,
             value:[]
           }
+        },
+        _computeLink:function(period){
+          return "expenses/" + period;
+        },
+        _tryDelete:function(e){
+          this.deleteDialog = true;
+          console.log(this.period);
+        },
+        _delete:function(e){
+          console.log("delete this month");
+          var period = this.period.split('-')[0] + "/" + this.period.split('-')[1];
+          console.log("period");
+          app.api.expenseListRemoveMonth(period, function(resp){
+            console.log("summary-card remove period");
+            console.log(resp);
+          });
         },
         _getTotal:function(analysis, key){
           return this.analysis[key].toFixed(2);

@@ -33,11 +33,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     page('/expenses/:period', scrollToTop, function(data) {
-      console.log("/expenses");
+      console.log("routing /expenses");
+      console.log(this);
       app.route = 'expenses';
       app.params = data.params;
       this.params = data.params;
-      console.log(app.params);
     });
 
     page('/history', scrollToTop, function() {

@@ -133,6 +133,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var before = beforeTime.getFullYear() + "/" + beforeTime.getMonth() + "/1";
       this.expensesList(after, before, callback);
     },
+    expenseListRemoveMonth:function(period, callback){
+      console.log("expenseListMonth");
+      console.log("period");
+      console.log(period);
+      var after = period + "/1";
+      var year = period.split("/")[0]; 
+      var month  = period.split("/")[1]; 
+      console.log(year);
+      console.log(month);
+      var beforeTime = new Date(year, month, 1);
+      console.log(beforeTime);
+      // beforeTime.setMonth(month + 1);
+      var before = beforeTime.getFullYear() + "/" + (beforeTime.getMonth() + 1) + "/1";
+      console.log(before);
+      this.expenseListRemove(after, before, callback);
+    },
+    expenseListRemove:function(after, before, callback){
+      console.log("expenseListRemove");
+      console.log(after);
+      console.log(before);
+      var query = "?holder=holder";
+      if (after){
+        query += "&after=" + after;
+      }
+      if (before){
+        query += "&before=" + before;
+      }
+      app.ajax("DELETE", app.api_url + "expenses" + query, "", function(resp){
+        callback(resp);
+      });
+    },
     expenseList:function(after, before, callback){
       console.log("expenseList");
       var query = "?username="+this.user.username;

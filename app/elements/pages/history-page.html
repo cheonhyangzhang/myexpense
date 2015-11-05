@@ -23,7 +23,7 @@
     </style>
     <h1>History</h1>
     <template is="dom-repeat" items="[[expenses_list]]">
-      <summary-card expenses="{{item.data}}" title="{{item.date}}"></summary-card>
+      <summary-card expenses="{{item.data}}" period="{{item.date}}" title="{{item.date}}"></summary-card>
     </template>
     <paper-toast id="general-message" text="{{toastMessage}}"></paper-toast>
   </template>
@@ -68,7 +68,6 @@
         },
         ready:function(){
           console.log("ready in expenses-page");
-          console.log(app.api);
           var element = this;
           element.expenses_list = [];
           var index = {};
@@ -86,6 +85,8 @@
             };
             var after_str = after.getFullYear() + "/" + after.getMonth() + "/1";
             var before_str = before.getFullYear() + "/" + before.getMonth() + "/1";
+            console.log("after_str");
+            console.log(after_str);
             app.api.expenseList(after_str, before_str, function(resp){
               if (!resp.code){
                 if (resp.length != 0){
@@ -100,6 +101,7 @@
               }
             });
           }
+          element.expenses_list = element.expenses_list.slice();
           this.periods = this.periods.slice();
           
         },

@@ -20,7 +20,7 @@
       }
     </style>
     <h1>Current Month Expenses</h1>
-    <summary-card expenses="[[expenses]]" title="{{_currentMonth()}}"></summary-card>
+    <summary-card expenses="[[expenses]]" period="{{_currentMonth()}}" title="{{_currentMonth()}}"></summary-card>
     <template is="dom-repeat" items="{{expenses}}">
       <paper-material class="box">
       <div class="layout horizontal" >
@@ -54,9 +54,8 @@
           console.log("_apiReadyChanged!!!!!!!!!!!!!!!!!!!!!!!!");
         },
         _currentMonth:function(){
-          var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
           var d = new Date();
-          return months[d.getMonth()] + " " + d.getFullYear();
+          return d.getFullYear() + "-" + (d.getMonth() + 1);
         },
         ready:function(){
           var element = this;

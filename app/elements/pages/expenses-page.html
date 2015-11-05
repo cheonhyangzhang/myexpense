@@ -67,21 +67,24 @@
         },
         ready:function(){
           console.log("ready in expenses-page get period in expenses-page");
-          console.log(this.period);
-          var year = this.period.split('-')[0];
-          var month = this.period.split('-')[1];
-          var start = year + "/" + month + "/1";
-          var endTime = new Date(year, month, "1");
-          endTime.setMonth(month + 1);
-          var end = endTime.getFullYear() + "/" + endTime.getMonth() + "/1";
-          var element = this;
-          app.api.expenseList(start, end, function(resp){
-            console.log("expenses-page: expensesList");
-            console.log(resp);
-            if (!resp.code){
-              element.expenses = resp;
-            }
-          });
+          if (this.period){
+            console.log(this.period);
+            var year = this.period.split('-')[0];
+            var month = this.period.split('-')[1];
+            var start = year + "/" + month + "/1";
+            var endTime = new Date(year, month, "1");
+            endTime.setMonth(month + 1);
+            var end = endTime.getFullYear() + "/" + endTime.getMonth() + "/1";
+            var element = this;
+            app.api.expenseList(start, end, function(resp){
+              console.log("expenses-page: expensesList");
+              console.log(resp);
+              if (!resp.code){
+                element.expenses = resp;
+              }
+            });
+          }
+          
         },
         attached:function(){
         },
